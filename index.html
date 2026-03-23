@@ -32,7 +32,6 @@
     flex-direction: column;
   }
 
-  /* ── Top bar ── */
   .topbar {
     padding: 18px 32px;
     border-bottom: 0.5px solid var(--border);
@@ -79,7 +78,6 @@
   }
   .btn-signout:hover { color: var(--danger); }
 
-  /* ── Auth screen ── */
   #authScreen {
     flex: 1;
     display: flex;
@@ -142,7 +140,6 @@
   }
   .btn-google:hover { opacity: 0.88; }
 
-  /* ── Main app ── */
   #mainApp {
     display: none;
     flex: 1;
@@ -183,7 +180,6 @@
     margin-bottom: 14px;
   }
 
-  /* ── Form elements ── */
   .field-row {
     display: flex;
     align-items: center;
@@ -229,7 +225,6 @@
   .example-tag .lbl { color: var(--muted); }
   .example-tag .val { color: var(--accent); }
 
-  /* ── Search ── */
   .search-row {
     display: flex;
     gap: 8px;
@@ -282,7 +277,6 @@
   .btn-rename:hover { background: var(--accent2); transform: translateY(-1px); }
   .btn-rename:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
 
-  /* ── Lists ── */
   .result-list {
     background: var(--surface2);
     border-radius: 10px;
@@ -361,7 +355,6 @@
   }
   .select-count { font-size: 12px; color: var(--muted); }
 
-  /* ── Preview ── */
   .preview-item {
     display: flex;
     align-items: center;
@@ -376,7 +369,6 @@
   .p-arrow { color: #333; padding: 0 10px; flex-shrink: 0; }
   .p-new { color: var(--accent); flex: 1; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-  /* ── Footer bar ── */
   .footer-bar {
     display: flex;
     align-items: center;
@@ -412,7 +404,6 @@
 </head>
 <body>
 
-<!-- Top Bar -->
 <div class="topbar">
   <div class="logo">LOVA <span>/ Drive Renamer</span></div>
   <div id="userPill" style="display:none;" class="user-pill">
@@ -422,7 +413,6 @@
   </div>
 </div>
 
-<!-- Auth Screen -->
 <div id="authScreen">
   <div class="auth-card fadein">
     <div class="auth-icon">📁</div>
@@ -435,11 +425,9 @@
   </div>
 </div>
 
-<!-- Main App -->
 <div id="mainApp">
 
   <div class="grid">
-    <!-- Format Card -->
     <div class="card">
       <div class="card-label">Format Options</div>
 
@@ -482,7 +470,6 @@
       </div>
     </div>
 
-    <!-- Browse Card -->
     <div class="card">
       <div class="card-label">Browse Google Drive</div>
       <div class="search-row">
@@ -493,7 +480,6 @@
     </div>
   </div>
 
-  <!-- Files Card -->
   <div class="card-full" id="fileSection" style="display:none;">
     <div class="card-label">Select Files to Rename</div>
     <div class="breadcrumb" id="breadcrumb"></div>
@@ -507,13 +493,11 @@
     <div class="result-list" id="fileList"></div>
   </div>
 
-  <!-- Preview Card -->
   <div class="card-full" id="previewSection" style="display:none;">
     <div class="card-label">Preview — rename results</div>
     <div class="result-list" id="previewList"></div>
   </div>
 
-  <!-- Footer -->
   <div class="footer-bar">
     <span class="status" id="statusMsg">Select a folder to get started</span>
     <div style="display:flex;gap:10px;align-items:center;">
@@ -532,7 +516,6 @@ let accessToken = null;
 let currentFiles = [];
 let selectedIds = new Set();
 
-// ── Google OAuth via popup ──────────────────────────────
 function signIn() {
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
@@ -581,7 +564,6 @@ async function onSignedIn() {
   } catch(e) {}
 }
 
-// ── API helper ─────────────────────────────────────────
 async function gapi(url, opts = {}) {
   const res = await fetch(url, {
     ...opts,
@@ -591,7 +573,6 @@ async function gapi(url, opts = {}) {
   return res.json();
 }
 
-// ── Format logic ───────────────────────────────────────
 function buildName(original, idx) {
   const fmt = document.getElementById('formatType').value;
   const where = document.getElementById('wherePos').value;
@@ -641,7 +622,6 @@ function updatePreview() {
   });
 }
 
-// ── File management ────────────────────────────────────
 function toggleFile(id) {
   selectedIds.has(id) ? selectedIds.delete(id) : selectedIds.add(id);
   document.querySelectorAll('.file-item').forEach(el => {
@@ -694,7 +674,6 @@ function renderFiles(files) {
   });
 }
 
-// ── Drive API ──────────────────────────────────────────
 async function searchFolders() {
   const q = document.getElementById('folderSearch').value.trim();
   if (!q) return;
@@ -721,6 +700,7 @@ async function searchFolders() {
   }
 }
 
+// Updated: fetches up to 1,000 files using pagination
 async function loadFiles(folderId, folderName) {
   selectedIds.clear();
   currentFiles = [];
@@ -730,8 +710,16 @@ async function loadFiles(folderId, folderName) {
   document.getElementById('previewSection').style.display = 'none';
   try {
     const query = encodeURIComponent(`'${folderId}' in parents and mimeType!='application/vnd.google-apps.folder' and trashed=false`);
-    const data = await gapi(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name,mimeType)&pageSize=200`);
-    currentFiles = data.files || [];
+    let allFiles = [];
+    let pageToken = null;
+    do {
+      const url = `https://www.googleapis.com/drive/v3/files?q=${query}&fields=nextPageToken,files(id,name,mimeType)&pageSize=1000${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`;
+      const data = await gapi(url);
+      allFiles = allFiles.concat(data.files || []);
+      pageToken = data.nextPageToken || null;
+      if (allFiles.length >= 1000) break;
+    } while (pageToken);
+    currentFiles = allFiles.slice(0, 1000);
     renderFiles(currentFiles);
     updateCount();
   } catch(e) {
@@ -770,7 +758,6 @@ async function doRename() {
   }
 }
 
-// ── Init ───────────────────────────────────────────────
 document.getElementById('signInBtn').addEventListener('click', signIn);
 document.getElementById('signOutBtn').addEventListener('click', signOut);
 document.getElementById('searchBtn').addEventListener('click', searchFolders);
