@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOVA Drive Renamer</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f11;
+    --surface: #18181c;
+    --surface2: #202026;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0f0f5;
+    --muted: #888896;
+    --accent: #6ee7b7;
+    --accent2: #34d399;
+    --danger: #f87171;
+    --mono: 'DM Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Top bar ── */
+  .topbar {
+    padding: 18px 32px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .logo span { color: var(--muted); font-weight: 400; }
+
+  .user-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 0.5px solid var(--border2);
+    border-radius: 100px;
+    padding: 6px 14px 6px 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .user-avatar {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: #0f0f11;
+  }
+
+  .btn-signout {
+    background: none; border: none;
+    color: var(--muted); font-size: 12px;
+    cursor: pointer; padding: 0; margin-left: 4px;
+    font-family: var(--sans);
+  }
+  .btn-signout:hover { color: var(--danger); }
+
+  /* ── Auth screen ── */
+  #authScreen {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0;
+    padding: 40px;
+  }
+
+  .auth-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border2);
+    border-radius: 20px;
+    padding: 48px 40px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .auth-icon {
+    width: 64px; height: 64px;
+    background: rgba(110,231,183,0.1);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 28px;
+  }
+
+  .auth-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+
+  .auth-sub {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+
+  .btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--text);
+    color: #0f0f11;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--sans);
+    cursor: pointer;
+    width: 100%;
+    transition: opacity 0.15s;
+  }
+  .btn-google:hover { opacity: 0.88; }
+
+  /* ── Main app ── */
+  #mainApp {
+    display: none;
+    flex: 1;
+    padding: 28px 32px;
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+
+  .card-full {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .card-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  /* ── Form elements ── */
+  .field-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .field-row:last-child { margin-bottom: 0; }
+
+  .field-label {
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 90px;
+    flex-shrink: 0;
+  }
+
+  select, input[type="text"], input[type="number"] {
+    background: var(--surface2);
+    border: 0.5px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: var(--sans);
+    padding: 7px 10px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  select:focus, input:focus { border-color: var(--accent); }
+  select { cursor: pointer; min-width: 150px; }
+  input[type="text"] { flex: 1; font-family: var(--mono); }
+  input[type="number"] { width: 64px; }
+
+  .example-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .example-tag .lbl { color: var(--muted); }
+  .example-tag .val { color: var(--accent); }
+
+  /* ── Search ── */
+  .search-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .search-row input { flex: 1; font-family: var(--sans); }
+
+  .btn {
+    background: var(--surface2);
+    border: 0.5px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--sans);
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .btn:hover { background: #2a2a32; }
+  .btn:active { transform: scale(0.98); }
+
+  .btn-accent {
+    background: var(--accent);
+    border-color: transparent;
+    color: #0f0f11;
+  }
+  .btn-accent:hover { background: var(--accent2); }
+
+  .btn-sm {
+    padding: 4px 10px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+
+  .btn-rename {
+    background: var(--accent);
+    border: none;
+    border-radius: 10px;
+    color: #0f0f11;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: var(--sans);
+    padding: 11px 28px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .btn-rename:hover { background: var(--accent2); transform: translateY(-1px); }
+  .btn-rename:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+  /* ── Lists ── */
+  .result-list {
+    background: var(--surface2);
+    border-radius: 10px;
+    border: 0.5px solid var(--border);
+    overflow: hidden;
+    max-height: 180px;
+    overflow-y: auto;
+  }
+
+  .result-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 0.5px solid var(--border);
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.1s;
+  }
+  .result-item:last-child { border-bottom: none; }
+  .result-item:hover { background: rgba(110,231,183,0.05); }
+
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    border-bottom: 0.5px solid var(--border);
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.1s;
+  }
+  .file-item:last-child { border-bottom: none; }
+  .file-item:hover { background: rgba(255,255,255,0.03); }
+  .file-item.selected { background: rgba(110,231,183,0.08); }
+
+  .file-check {
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid #444;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.12s;
+  }
+  .file-item.selected .file-check {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .file-check::after {
+    content: '';
+    display: none;
+    width: 4px; height: 7px;
+    border: 1.5px solid #0f0f11;
+    border-top: none; border-left: none;
+    transform: rotate(45deg) translateY(-1px);
+  }
+  .file-item.selected .file-check::after { display: block; }
+
+  .file-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .file-ext {
+    font-size: 10px;
+    font-family: var(--mono);
+    background: var(--surface2);
+    border: 0.5px solid var(--border2);
+    border-radius: 4px;
+    padding: 2px 6px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .select-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .select-count { font-size: 12px; color: var(--muted); }
+
+  /* ── Preview ── */
+  .preview-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 14px;
+    border-bottom: 0.5px solid var(--border);
+    font-size: 12px;
+    font-family: var(--mono);
+    gap: 0;
+  }
+  .preview-item:last-child { border-bottom: none; }
+  .p-old { color: var(--muted); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .p-arrow { color: #333; padding: 0 10px; flex-shrink: 0; }
+  .p-new { color: var(--accent); flex: 1; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ── Footer bar ── */
+  .footer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+  }
+
+  .status { font-size: 13px; color: var(--muted); }
+  .status.ok { color: var(--accent); }
+  .status.err { color: var(--danger); }
+
+  .empty { padding: 24px; text-align: center; color: var(--muted); font-size: 13px; }
+  .loading { padding: 16px; text-align: center; color: var(--muted); font-size: 13px; }
+
+  .breadcrumb {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-family: var(--mono);
+  }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .fadein { animation: fadeIn 0.25s ease both; }
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="topbar">
+  <div class="logo">LOVA <span>/ Drive Renamer</span></div>
+  <div id="userPill" style="display:none;" class="user-pill">
+    <div class="user-avatar" id="userInitials">L</div>
+    <span id="userEmailLabel">—</span>
+    <button class="btn-signout" id="signOutBtn">Sign out</button>
+  </div>
+</div>
+
+<!-- Auth Screen -->
+<div id="authScreen">
+  <div class="auth-card fadein">
+    <div class="auth-icon">📁</div>
+    <div class="auth-title">LOVA Drive Renamer</div>
+    <div class="auth-sub">Connect your Google Drive to batch rename files using Mac Finder-style format options. Works in any browser — no install needed.</div>
+    <button class="btn-google" id="signInBtn">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.3z"/></svg>
+      Sign in with Google
+    </button>
+  </div>
+</div>
+
+<!-- Main App -->
+<div id="mainApp">
+
+  <div class="grid">
+    <!-- Format Card -->
+    <div class="card">
+      <div class="card-label">Format Options</div>
+
+      <div class="field-row">
+        <span class="field-label">Name Format</span>
+        <select id="formatType">
+          <option value="index">Name and Index</option>
+          <option value="counter">Name and Counter</option>
+          <option value="date">Name and Date</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <span class="field-label">Position</span>
+        <select id="wherePos">
+          <option value="after">After name</option>
+          <option value="before">Before name</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <span class="field-label">Base Name</span>
+        <input type="text" id="customName" value="FILENAME" placeholder="Enter base name..." />
+      </div>
+
+      <div id="startRow" class="field-row">
+        <span class="field-label">Start at</span>
+        <input type="number" id="startNum" value="1" min="0" />
+        <select id="padWidth" style="min-width:110px; display:none;">
+          <option value="0">1, 2, 3</option>
+          <option value="2">01, 02, 03</option>
+          <option value="3" selected>001, 002, 003</option>
+          <option value="4">0001, 0002</option>
+        </select>
+      </div>
+
+      <div class="example-tag">
+        <span class="lbl">Example:</span>
+        <span class="val" id="exampleOut">FILENAME_1.pdf</span>
+      </div>
+    </div>
+
+    <!-- Browse Card -->
+    <div class="card">
+      <div class="card-label">Browse Google Drive</div>
+      <div class="search-row">
+        <input type="text" id="folderSearch" placeholder="Search folder name..." />
+        <button class="btn btn-accent" id="searchBtn">Search</button>
+      </div>
+      <div id="folderResults"></div>
+    </div>
+  </div>
+
+  <!-- Files Card -->
+  <div class="card-full" id="fileSection" style="display:none;">
+    <div class="card-label">Select Files to Rename</div>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="select-bar">
+      <span class="select-count" id="selectCount">0 files selected</span>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-sm" id="selectAllBtn">Select all</button>
+        <button class="btn btn-sm" id="deselectAllBtn">Deselect all</button>
+      </div>
+    </div>
+    <div class="result-list" id="fileList"></div>
+  </div>
+
+  <!-- Preview Card -->
+  <div class="card-full" id="previewSection" style="display:none;">
+    <div class="card-label">Preview — rename results</div>
+    <div class="result-list" id="previewList"></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-bar">
+    <span class="status" id="statusMsg">Select a folder to get started</span>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="btn" id="cancelBtn">Clear</button>
+      <button class="btn-rename" id="renameBtn" disabled>Rename Files</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CLIENT_ID = '7763473931-466kltkst5vksek8qefus9bh66f1k4mq.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email';
+
+let accessToken = null;
+let currentFiles = [];
+let selectedIds = new Set();
+
+// ── Google OAuth via popup ──────────────────────────────
+function signIn() {
+  const params = new URLSearchParams({
+    client_id: CLIENT_ID,
+    redirect_uri: window.location.origin + window.location.pathname,
+    response_type: 'token',
+    scope: SCOPES,
+    include_granted_scopes: 'true'
+  });
+  const url = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
+  const w = window.open(url, 'oauth', 'width=500,height=620,menubar=no,toolbar=no');
+
+  const timer = setInterval(() => {
+    try {
+      if (!w || w.closed) { clearInterval(timer); return; }
+      const hash = w.location.hash;
+      if (hash && hash.includes('access_token')) {
+        clearInterval(timer);
+        w.close();
+        const p = new URLSearchParams(hash.slice(1));
+        accessToken = p.get('access_token');
+        sessionStorage.setItem('gdrive_token', accessToken);
+        onSignedIn();
+      }
+    } catch(e) {}
+  }, 300);
+}
+
+function signOut() {
+  accessToken = null;
+  sessionStorage.removeItem('gdrive_token');
+  document.getElementById('authScreen').style.display = 'flex';
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('userPill').style.display = 'none';
+}
+
+async function onSignedIn() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('userPill').style.display = 'flex';
+  try {
+    const res = await gapi('https://www.googleapis.com/oauth2/v1/userinfo?alt=json');
+    const email = res.email || '';
+    const initials = (res.name || email).slice(0,1).toUpperCase();
+    document.getElementById('userEmailLabel').textContent = email;
+    document.getElementById('userInitials').textContent = initials;
+  } catch(e) {}
+}
+
+// ── API helper ─────────────────────────────────────────
+async function gapi(url, opts = {}) {
+  const res = await fetch(url, {
+    ...opts,
+    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json', ...(opts.headers||{}) }
+  });
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json();
+}
+
+// ── Format logic ───────────────────────────────────────
+function buildName(original, idx) {
+  const fmt = document.getElementById('formatType').value;
+  const where = document.getElementById('wherePos').value;
+  const custom = document.getElementById('customName').value.trim() || 'FILENAME';
+  const start = parseInt(document.getElementById('startNum').value) || 1;
+  const dot = original.lastIndexOf('.');
+  const ext = dot > 0 ? original.slice(dot) : '';
+
+  let suffix = '';
+  if (fmt === 'index') suffix = `_${start + idx}`;
+  else if (fmt === 'counter') {
+    const pad = parseInt(document.getElementById('padWidth').value) || 3;
+    suffix = `_${String(start + idx).padStart(pad, '0')}`;
+  } else {
+    suffix = `_${new Date().toISOString().slice(0,10)}`;
+  }
+
+  return where === 'after' ? `${custom}${suffix}${ext}` : `${suffix.replace(/^_/,'')}_${custom}${ext}`;
+}
+
+function onFormatChange() {
+  const fmt = document.getElementById('formatType').value;
+  document.getElementById('startRow').style.display = fmt === 'date' ? 'none' : '';
+  document.getElementById('padWidth').style.display = fmt === 'counter' ? '' : 'none';
+  updatePreview();
+}
+
+function updatePreview() {
+  document.getElementById('exampleOut').textContent = buildName('sample.pdf', 0);
+  const sel = currentFiles.filter(f => selectedIds.has(f.id));
+  if (!sel.length) {
+    document.getElementById('previewSection').style.display = 'none';
+    document.getElementById('renameBtn').disabled = true;
+    document.getElementById('statusMsg').textContent = currentFiles.length ? `${currentFiles.length} files loaded — select some to rename` : 'Select a folder to get started';
+    document.getElementById('statusMsg').className = 'status';
+    return;
+  }
+  document.getElementById('previewSection').style.display = '';
+  document.getElementById('renameBtn').disabled = false;
+  const ul = document.getElementById('previewList');
+  ul.innerHTML = '';
+  sel.forEach((f, i) => {
+    const d = document.createElement('div');
+    d.className = 'preview-item';
+    d.innerHTML = `<span class="p-old">${f.name}</span><span class="p-arrow">→</span><span class="p-new">${buildName(f.name, i)}</span>`;
+    ul.appendChild(d);
+  });
+}
+
+// ── File management ────────────────────────────────────
+function toggleFile(id) {
+  selectedIds.has(id) ? selectedIds.delete(id) : selectedIds.add(id);
+  document.querySelectorAll('.file-item').forEach(el => {
+    if (el.dataset.id === id) el.classList.toggle('selected', selectedIds.has(id));
+  });
+  updateCount();
+}
+
+function selectAll() {
+  currentFiles.forEach(f => selectedIds.add(f.id));
+  document.querySelectorAll('.file-item').forEach(el => el.classList.add('selected'));
+  updateCount();
+}
+
+function deselectAll() {
+  selectedIds.clear();
+  document.querySelectorAll('.file-item').forEach(el => el.classList.remove('selected'));
+  updateCount();
+}
+
+function updateCount() {
+  document.getElementById('selectCount').textContent = `${selectedIds.size} file${selectedIds.size !== 1 ? 's' : ''} selected`;
+  updatePreview();
+}
+
+function fileIcon(mime) {
+  if (!mime) return '📄';
+  if (mime.includes('image')) return '🖼';
+  if (mime.includes('video')) return '🎬';
+  if (mime.includes('audio')) return '🎵';
+  if (mime.includes('pdf')) return '📕';
+  if (mime.includes('spreadsheet') || mime.includes('excel')) return '📊';
+  if (mime.includes('presentation') || mime.includes('powerpoint')) return '📑';
+  if (mime.includes('document') || mime.includes('word')) return '📝';
+  return '📄';
+}
+
+function renderFiles(files) {
+  const ul = document.getElementById('fileList');
+  ul.innerHTML = '';
+  if (!files.length) { ul.innerHTML = '<div class="empty">No files found in this folder</div>'; return; }
+  files.forEach(f => {
+    const d = document.createElement('div');
+    d.className = 'file-item' + (selectedIds.has(f.id) ? ' selected' : '');
+    d.dataset.id = f.id;
+    const ext = f.name.includes('.') ? f.name.split('.').pop().toUpperCase() : '';
+    d.innerHTML = `<div class="file-check"></div><span style="font-size:15px;flex-shrink:0;">${fileIcon(f.mimeType)}</span><span class="file-name">${f.name}</span>${ext ? `<span class="file-ext">${ext}</span>` : ''}`;
+    d.onclick = () => toggleFile(f.id);
+    ul.appendChild(d);
+  });
+}
+
+// ── Drive API ──────────────────────────────────────────
+async function searchFolders() {
+  const q = document.getElementById('folderSearch').value.trim();
+  if (!q) return;
+  const div = document.getElementById('folderResults');
+  div.innerHTML = '<div class="loading">Searching...</div>';
+  try {
+    const query = encodeURIComponent(`mimeType='application/vnd.google-apps.folder' and name contains '${q}' and trashed=false`);
+    const data = await gapi(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&pageSize=8`);
+    const folders = data.files || [];
+    div.innerHTML = '';
+    if (!folders.length) { div.innerHTML = '<div class="empty">No folders found</div>'; return; }
+    const list = document.createElement('div');
+    list.className = 'result-list fadein';
+    folders.forEach(f => {
+      const d = document.createElement('div');
+      d.className = 'result-item';
+      d.innerHTML = `<span style="font-size:15px;">📁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.name}</span><span style="font-size:11px;color:var(--muted);">Open →</span>`;
+      d.onclick = () => loadFiles(f.id, f.name);
+      list.appendChild(d);
+    });
+    div.appendChild(list);
+  } catch(e) {
+    div.innerHTML = `<div class="empty" style="color:var(--danger);">Error: ${e.message}</div>`;
+  }
+}
+
+async function loadFiles(folderId, folderName) {
+  selectedIds.clear();
+  currentFiles = [];
+  document.getElementById('fileSection').style.display = '';
+  document.getElementById('breadcrumb').textContent = `📁 ${folderName}`;
+  document.getElementById('fileList').innerHTML = '<div class="loading">Loading files...</div>';
+  document.getElementById('previewSection').style.display = 'none';
+  try {
+    const query = encodeURIComponent(`'${folderId}' in parents and mimeType!='application/vnd.google-apps.folder' and trashed=false`);
+    const data = await gapi(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name,mimeType)&pageSize=200`);
+    currentFiles = data.files || [];
+    renderFiles(currentFiles);
+    updateCount();
+  } catch(e) {
+    document.getElementById('fileList').innerHTML = `<div class="empty" style="color:var(--danger);">Failed to load: ${e.message}</div>`;
+  }
+}
+
+async function doRename() {
+  const sel = currentFiles.filter(f => selectedIds.has(f.id));
+  if (!sel.length) return;
+  document.getElementById('renameBtn').disabled = true;
+  document.getElementById('statusMsg').textContent = `Renaming ${sel.length} files...`;
+  document.getElementById('statusMsg').className = 'status';
+  let done = 0;
+  try {
+    for (let i = 0; i < sel.length; i++) {
+      const f = sel[i];
+      const newName = buildName(f.name, i);
+      await fetch(`https://www.googleapis.com/drive/v3/files/${f.id}`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newName })
+      });
+      f.name = newName;
+      done++;
+    }
+    selectedIds.clear();
+    renderFiles(currentFiles);
+    updateCount();
+    document.getElementById('statusMsg').textContent = `✓ ${done} file${done !== 1 ? 's' : ''} renamed successfully!`;
+    document.getElementById('statusMsg').className = 'status ok';
+  } catch(e) {
+    document.getElementById('statusMsg').textContent = `Error: ${e.message}`;
+    document.getElementById('statusMsg').className = 'status err';
+    document.getElementById('renameBtn').disabled = false;
+  }
+}
+
+// ── Init ───────────────────────────────────────────────
+document.getElementById('signInBtn').addEventListener('click', signIn);
+document.getElementById('signOutBtn').addEventListener('click', signOut);
+document.getElementById('searchBtn').addEventListener('click', searchFolders);
+document.getElementById('selectAllBtn').addEventListener('click', selectAll);
+document.getElementById('deselectAllBtn').addEventListener('click', deselectAll);
+document.getElementById('cancelBtn').addEventListener('click', deselectAll);
+document.getElementById('renameBtn').addEventListener('click', doRename);
+document.getElementById('formatType').addEventListener('change', onFormatChange);
+document.getElementById('wherePos').addEventListener('change', updatePreview);
+document.getElementById('customName').addEventListener('input', updatePreview);
+document.getElementById('startNum').addEventListener('change', updatePreview);
+document.getElementById('padWidth').addEventListener('change', updatePreview);
+document.getElementById('folderSearch').addEventListener('keydown', e => { if (e.key === 'Enter') searchFolders(); });
+
+onFormatChange();
+
+const saved = sessionStorage.getItem('gdrive_token');
+if (saved) { accessToken = saved; onSignedIn(); }
+</script>
+</body>
+</html>
