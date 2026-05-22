@@ -7,17 +7,19 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f0f11;
-    --surface: #18181c;
-    --surface2: #202026;
-    --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.12);
-    --text: #f0f0f5;
-    --muted: #888896;
-    --accent: #6ee7b7;
-    --accent2: #34d399;
-    --danger: #f87171;
-    --warning: #fbbf24;
+    --bg: #f4f4f6;
+    --surface: #ffffff;
+    --surface2: #f0f0f3;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.14);
+    --text: #18181c;
+    --muted: #6b6b7a;
+    --accent: #059669;
+    --accent2: #047857;
+    --accent-light: rgba(5,150,105,0.08);
+    --accent-border: rgba(5,150,105,0.28);
+    --danger: #dc2626;
+    --warning: #d97706;
     --mono: 'DM Mono', monospace;
     --sans: 'Syne', sans-serif;
   }
@@ -34,8 +36,9 @@
   }
 
   .topbar {
-    padding: 18px 32px;
-    border-bottom: 0.5px solid var(--border);
+    padding: 16px 32px;
+    border-bottom: 0.5px solid var(--border2);
+    background: var(--surface);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -48,17 +51,16 @@
     color: var(--accent);
     text-transform: uppercase;
   }
-
   .logo span { color: var(--muted); font-weight: 400; }
 
   .user-pill {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: var(--surface);
+    background: var(--surface2);
     border: 0.5px solid var(--border2);
     border-radius: 100px;
-    padding: 6px 14px 6px 8px;
+    padding: 5px 14px 5px 6px;
     font-size: 13px;
     color: var(--muted);
   }
@@ -68,7 +70,7 @@
     border-radius: 50%;
     background: var(--accent);
     display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 600; color: #0f0f11;
+    font-size: 11px; font-weight: 700; color: #fff;
   }
 
   .btn-signout {
@@ -79,12 +81,12 @@
   }
   .btn-signout:hover { color: var(--danger); }
 
-  /* Tab nav */
   .tab-nav {
     display: flex;
     gap: 4px;
-    padding: 16px 32px 0;
-    border-bottom: 0.5px solid var(--border);
+    padding: 0 32px;
+    border-bottom: 0.5px solid var(--border2);
+    background: var(--surface);
   }
 
   .tab-btn {
@@ -95,25 +97,20 @@
     font-size: 13px;
     font-weight: 600;
     font-family: var(--sans);
-    padding: 8px 16px 12px;
+    padding: 12px 16px 14px;
     cursor: pointer;
     letter-spacing: 0.03em;
     transition: color 0.15s;
     margin-bottom: -0.5px;
   }
   .tab-btn:hover { color: var(--text); }
-  .tab-btn.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-  }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 
   #authScreen {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    gap: 0;
     padding: 40px;
   }
 
@@ -125,30 +122,20 @@
     max-width: 400px;
     width: 100%;
     text-align: center;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
   }
 
   .auth-icon {
     width: 64px; height: 64px;
-    background: rgba(110,231,183,0.1);
+    background: var(--accent-light);
     border-radius: 16px;
     display: flex; align-items: center; justify-content: center;
     margin: 0 auto 24px;
     font-size: 28px;
   }
 
-  .auth-title {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    color: var(--text);
-  }
-
-  .auth-sub {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-bottom: 32px;
-  }
+  .auth-title { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+  .auth-sub { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 32px; }
 
   .btn-google {
     display: flex;
@@ -156,7 +143,7 @@
     justify-content: center;
     gap: 10px;
     background: var(--text);
-    color: #0f0f11;
+    color: #fff;
     border: none;
     border-radius: 10px;
     padding: 12px 24px;
@@ -167,41 +154,26 @@
     width: 100%;
     transition: opacity 0.15s;
   }
-  .btn-google:hover { opacity: 0.88; }
+  .btn-google:hover { opacity: 0.85; }
 
-  /* Tab panels */
-  #mainApp {
-    display: none;
-    flex: 1;
-    flex-direction: column;
-  }
+  #mainApp { display: none; flex: 1; flex-direction: column; }
 
-  .tab-panel {
-    display: none;
-    padding: 28px 32px;
-    max-width: 860px;
-    width: 100%;
-    margin: 0 auto;
-  }
+  .tab-panel { display: none; padding: 24px 32px; max-width: 880px; width: 100%; margin: 0 auto; }
   .tab-panel.active { display: block; }
 
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .copy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
 
   .card {
     background: var(--surface);
-    border: 0.5px solid var(--border);
+    border: 0.5px solid var(--border2);
     border-radius: 14px;
     padding: 20px;
   }
 
   .card-full {
     background: var(--surface);
-    border: 0.5px solid var(--border);
+    border: 0.5px solid var(--border2);
     border-radius: 14px;
     padding: 20px;
     margin-bottom: 16px;
@@ -209,7 +181,7 @@
 
   .card-label {
     font-size: 10px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
@@ -227,7 +199,7 @@
   .field-label {
     font-size: 12px;
     color: var(--muted);
-    min-width: 90px;
+    min-width: 100px;
     flex-shrink: 0;
   }
 
@@ -244,7 +216,7 @@
   }
   select:focus, input:focus { border-color: var(--accent); }
   select { cursor: pointer; min-width: 150px; }
-  input[type="text"] { flex: 1; font-family: var(--mono); }
+  input[type="text"] { flex: 1; }
   input[type="number"] { width: 64px; }
 
   .example-tag {
@@ -259,14 +231,60 @@
     font-size: 12px;
   }
   .example-tag .lbl { color: var(--muted); }
-  .example-tag .val { color: var(--accent); }
+  .example-tag .val { color: var(--accent); font-weight: 500; }
+
+  /* Search mode toggle */
+  .mode-toggle {
+    display: flex;
+    gap: 0;
+    margin-bottom: 10px;
+    background: var(--surface2);
+    border: 0.5px solid var(--border2);
+    border-radius: 8px;
+    padding: 3px;
+  }
+  .mode-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    font-family: var(--sans);
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.03em;
+  }
+  .mode-btn.active {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
 
   .search-row {
     display: flex;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
   .search-row input { flex: 1; font-family: var(--sans); }
+
+  /* URL input row */
+  .url-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    align-items: center;
+  }
+  .url-row input { flex: 1; font-family: var(--mono); font-size: 12px; }
+
+  .url-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
 
   .btn {
     background: var(--surface2);
@@ -281,13 +299,13 @@
     transition: background 0.15s;
     white-space: nowrap;
   }
-  .btn:hover { background: #2a2a32; }
+  .btn:hover { background: #e8e8ec; }
   .btn:active { transform: scale(0.98); }
 
   .btn-accent {
     background: var(--accent);
     border-color: transparent;
-    color: #0f0f11;
+    color: #fff;
   }
   .btn-accent:hover { background: var(--accent2); }
 
@@ -301,7 +319,7 @@
     background: var(--accent);
     border: none;
     border-radius: 10px;
-    color: #0f0f11;
+    color: #fff;
     font-size: 14px;
     font-weight: 700;
     font-family: var(--sans);
@@ -311,7 +329,7 @@
     letter-spacing: 0.02em;
   }
   .btn-rename:hover { background: var(--accent2); transform: translateY(-1px); }
-  .btn-rename:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+  .btn-rename:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
   .result-list {
     background: var(--surface2);
@@ -333,9 +351,9 @@
     transition: background 0.1s;
   }
   .result-item:last-child { border-bottom: none; }
-  .result-item:hover { background: rgba(110,231,183,0.05); }
+  .result-item:hover { background: rgba(5,150,105,0.05); }
   .result-item.selected-folder {
-    background: rgba(110,231,183,0.10);
+    background: var(--accent-light);
     border-left: 2px solid var(--accent);
   }
 
@@ -350,26 +368,23 @@
     transition: background 0.1s;
   }
   .file-item:last-child { border-bottom: none; }
-  .file-item:hover { background: rgba(255,255,255,0.03); }
-  .file-item.selected { background: rgba(110,231,183,0.08); }
+  .file-item:hover { background: rgba(0,0,0,0.02); }
+  .file-item.selected { background: var(--accent-light); }
 
   .file-check {
     width: 16px; height: 16px;
     border-radius: 4px;
-    border: 1.5px solid #444;
+    border: 1.5px solid #ccc;
     flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
     transition: all 0.12s;
   }
-  .file-item.selected .file-check {
-    background: var(--accent);
-    border-color: var(--accent);
-  }
+  .file-item.selected .file-check { background: var(--accent); border-color: var(--accent); }
   .file-check::after {
     content: '';
     display: none;
     width: 4px; height: 7px;
-    border: 1.5px solid #0f0f11;
+    border: 1.5px solid #fff;
     border-top: none; border-left: none;
     transform: rotate(45deg) translateY(-1px);
   }
@@ -406,8 +421,8 @@
   }
   .preview-item:last-child { border-bottom: none; }
   .p-old { color: var(--muted); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .p-arrow { color: #333; padding: 0 10px; flex-shrink: 0; }
-  .p-new { color: var(--accent); flex: 1; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .p-arrow { color: #bbb; padding: 0 10px; flex-shrink: 0; }
+  .p-new { color: var(--accent); flex: 1; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
 
   .footer-bar {
     display: flex;
@@ -416,7 +431,7 @@
     margin-top: 16px;
     padding: 16px 20px;
     background: var(--surface);
-    border: 0.5px solid var(--border);
+    border: 0.5px solid var(--border2);
     border-radius: 14px;
   }
 
@@ -435,20 +450,12 @@
     font-family: var(--mono);
   }
 
-  /* Copy tool specifics */
-  .copy-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-
   .folder-selected-tag {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: rgba(110,231,183,0.08);
-    border: 0.5px solid rgba(110,231,183,0.25);
+    background: var(--accent-light);
+    border: 0.5px solid var(--accent-border);
     border-radius: 8px;
     padding: 8px 12px;
     margin-top: 10px;
@@ -456,33 +463,35 @@
     font-family: var(--mono);
     color: var(--accent);
     min-height: 36px;
+    font-weight: 500;
+    word-break: break-all;
   }
   .folder-selected-tag.empty-tag {
     color: var(--muted);
     background: var(--surface2);
     border-color: var(--border2);
+    font-weight: 400;
   }
 
   .copy-summary {
     background: var(--surface2);
     border-radius: 10px;
     border: 0.5px solid var(--border);
-    padding: 16px 18px;
+    padding: 14px 18px;
     margin-bottom: 16px;
     font-size: 13px;
-    line-height: 1.7;
   }
   .copy-summary .row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 4px 0;
+    padding: 5px 0;
     border-bottom: 0.5px solid var(--border);
   }
   .copy-summary .row:last-child { border-bottom: none; }
   .copy-summary .lbl { color: var(--muted); font-size: 12px; }
   .copy-summary .val { font-family: var(--mono); color: var(--text); font-size: 12px; }
-  .copy-summary .val.green { color: var(--accent); }
+  .copy-summary .val.green { color: var(--accent); font-weight: 500; }
 
   .progress-bar-wrap {
     background: var(--surface2);
@@ -524,10 +533,10 @@
 
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-  .fadein { animation: fadeIn 0.25s ease both; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .fadein { animation: fadeIn 0.2s ease both; }
 </style>
 </head>
 <body>
@@ -541,7 +550,7 @@
   </div>
 </div>
 
-<!-- AUTH SCREEN -->
+<!-- AUTH -->
 <div id="authScreen">
   <div class="auth-card fadein">
     <div class="auth-icon">📁</div>
@@ -557,13 +566,12 @@
 <!-- MAIN APP -->
 <div id="mainApp">
 
-  <!-- Tab navigation -->
   <div class="tab-nav" id="tabNav" style="display:none;">
     <button class="tab-btn active" data-tab="renameTab">📝 Rename Files</button>
     <button class="tab-btn" data-tab="copyTab">📋 Copy Folder</button>
   </div>
 
-  <!-- ======= RENAME TAB ======= -->
+  <!-- ===== RENAME TAB ===== -->
   <div id="renameTab" class="tab-panel active">
 
     <div class="grid">
@@ -589,7 +597,7 @@
 
         <div class="field-row">
           <span class="field-label">Base Name</span>
-          <input type="text" id="customName" value="FILENAME" placeholder="Enter base name..." />
+          <input type="text" id="customName" value="FILENAME" placeholder="Enter base name..." style="font-family:var(--mono);" />
         </div>
 
         <div id="startRow" class="field-row">
@@ -645,31 +653,63 @@
       </div>
     </div>
 
-  </div><!-- /renameTab -->
+  </div>
 
-  <!-- ======= COPY FOLDER TAB ======= -->
+  <!-- ===== COPY FOLDER TAB ===== -->
   <div id="copyTab" class="tab-panel">
 
     <div class="copy-grid">
-      <!-- Source folder -->
+      <!-- Source -->
       <div class="card">
         <div class="card-label">Source Folder</div>
-        <div class="search-row">
-          <input type="text" id="srcSearch" placeholder="Search folder to copy..." />
-          <button class="btn btn-accent" id="srcSearchBtn">Search</button>
+        <div class="mode-toggle" id="srcModeToggle">
+          <button class="mode-btn active" data-mode="search">🔍 Search</button>
+          <button class="mode-btn" data-mode="url">🔗 Paste Link</button>
         </div>
-        <div id="srcResults"></div>
+
+        <div id="srcSearchPane">
+          <div class="search-row">
+            <input type="text" id="srcSearch" placeholder="Search folder to copy..." />
+            <button class="btn btn-accent" id="srcSearchBtn">Search</button>
+          </div>
+          <div id="srcResults"></div>
+        </div>
+
+        <div id="srcUrlPane" style="display:none;">
+          <div class="url-hint">Paste the Google Drive folder URL or sharing link — the folder ID will be extracted automatically.</div>
+          <div class="url-row">
+            <input type="text" id="srcUrlInput" placeholder="https://drive.google.com/drive/folders/..." />
+            <button class="btn btn-accent" id="srcUrlBtn">Load</button>
+          </div>
+        </div>
+
         <div class="folder-selected-tag empty-tag" id="srcTag">No folder selected</div>
       </div>
 
-      <!-- Destination folder -->
+      <!-- Destination -->
       <div class="card">
         <div class="card-label">Destination Folder</div>
-        <div class="search-row">
-          <input type="text" id="dstSearch" placeholder="Search destination folder..." />
-          <button class="btn btn-accent" id="dstSearchBtn">Search</button>
+        <div class="mode-toggle" id="dstModeToggle">
+          <button class="mode-btn active" data-mode="search">🔍 Search</button>
+          <button class="mode-btn" data-mode="url">🔗 Paste Link</button>
         </div>
-        <div id="dstResults"></div>
+
+        <div id="dstSearchPane">
+          <div class="search-row">
+            <input type="text" id="dstSearch" placeholder="Search destination folder..." />
+            <button class="btn btn-accent" id="dstSearchBtn">Search</button>
+          </div>
+          <div id="dstResults"></div>
+        </div>
+
+        <div id="dstUrlPane" style="display:none;">
+          <div class="url-hint">Paste the Google Drive folder URL or sharing link — the folder ID will be extracted automatically.</div>
+          <div class="url-row">
+            <input type="text" id="dstUrlInput" placeholder="https://drive.google.com/drive/folders/..." />
+            <button class="btn btn-accent" id="dstUrlBtn">Load</button>
+          </div>
+        </div>
+
         <div class="folder-selected-tag empty-tag" id="dstTag">No folder selected</div>
       </div>
     </div>
@@ -697,14 +737,14 @@
       </div>
     </div>
 
-    <!-- Summary before copy -->
+    <!-- Summary -->
     <div class="card-full" id="copySummaryCard" style="display:none;">
       <div class="card-label">Ready to copy</div>
       <div class="copy-summary" id="copySummary"></div>
       <div id="copyProgressWrap" style="display:none;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
           <span style="font-size:12px;color:var(--muted);" id="copyProgressLabel">Starting...</span>
-          <span style="font-size:12px;font-family:var(--mono);color:var(--accent);" id="copyProgressPct">0%</span>
+          <span style="font-size:12px;font-family:var(--mono);color:var(--accent);font-weight:500;" id="copyProgressPct">0%</span>
         </div>
         <div class="progress-bar-wrap"><div class="progress-bar" id="copyProgressBar"></div></div>
       </div>
@@ -724,9 +764,9 @@
       </div>
     </div>
 
-  </div><!-- /copyTab -->
+  </div>
 
-</div><!-- /mainApp -->
+</div>
 
 <script>
 const CLIENT_ID = '7763473931-kehg68qo6vtjk3qcu2g1ji7l5amnr31f.apps.googleusercontent.com';
@@ -735,13 +775,11 @@ const SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com
 let accessToken = null;
 let currentFiles = [];
 let selectedIds = new Set();
-
-// Copy state
-let copySrc = null;  // { id, name }
-let copyDst = null;  // { id, name }
+let copySrc = null;
+let copyDst = null;
 let copyRunning = false;
 
-// ─── Auth ─────────────────────────────────────────────────────────────────────
+// ─── Auth ──────────────────────────────────────────────────────────────────────
 
 function signIn() {
   const params = new URLSearchParams({
@@ -751,16 +789,13 @@ function signIn() {
     scope: SCOPES,
     include_granted_scopes: 'true'
   });
-  const url = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
-  const w = window.open(url, 'oauth', 'width=500,height=620,menubar=no,toolbar=no');
-
+  const w = window.open(`https://accounts.google.com/o/oauth2/v2/auth?${params}`, 'oauth', 'width=500,height=620,menubar=no,toolbar=no');
   const timer = setInterval(() => {
     try {
       if (!w || w.closed) { clearInterval(timer); return; }
       const hash = w.location.hash;
       if (hash && hash.includes('access_token')) {
-        clearInterval(timer);
-        w.close();
+        clearInterval(timer); w.close();
         const p = new URLSearchParams(hash.slice(1));
         accessToken = p.get('access_token');
         sessionStorage.setItem('gdrive_token', accessToken);
@@ -786,10 +821,8 @@ async function onSignedIn() {
   document.getElementById('userPill').style.display = 'flex';
   try {
     const res = await gapi('https://www.googleapis.com/oauth2/v1/userinfo?alt=json');
-    const email = res.email || '';
-    const initials = (res.name || email).slice(0,1).toUpperCase();
-    document.getElementById('userEmailLabel').textContent = email;
-    document.getElementById('userInitials').textContent = initials;
+    document.getElementById('userEmailLabel').textContent = res.email || '';
+    document.getElementById('userInitials').textContent = (res.name || res.email || 'L').slice(0,1).toUpperCase();
   } catch(e) {}
 }
 
@@ -802,7 +835,7 @@ async function gapi(url, opts = {}) {
   return res.json();
 }
 
-// ─── Tab switching ─────────────────────────────────────────────────────────────
+// ─── Tabs ──────────────────────────────────────────────────────────────────────
 
 document.getElementById('tabNav').addEventListener('click', e => {
   const btn = e.target.closest('.tab-btn');
@@ -813,7 +846,7 @@ document.getElementById('tabNav').addEventListener('click', e => {
   document.getElementById(btn.dataset.tab).classList.add('active');
 });
 
-// ─── Rename tool ───────────────────────────────────────────────────────────────
+// ─── Rename Tool ───────────────────────────────────────────────────────────────
 
 function buildName(original, idx) {
   const fmt = document.getElementById('formatType').value;
@@ -822,7 +855,6 @@ function buildName(original, idx) {
   const start = parseInt(document.getElementById('startNum').value) || 1;
   const dot = original.lastIndexOf('.');
   const ext = dot > 0 ? original.slice(dot) : '';
-
   let suffix = '';
   if (fmt === 'index') suffix = `_${start + idx}`;
   else if (fmt === 'counter') {
@@ -831,7 +863,6 @@ function buildName(original, idx) {
   } else {
     suffix = `_${new Date().toISOString().slice(0,10)}`;
   }
-
   return where === 'after' ? `${custom}${suffix}${ext}` : `${suffix.replace(/^_/,'')}_${custom}${ext}`;
 }
 
@@ -872,17 +903,8 @@ function toggleFile(id) {
   updateCount();
 }
 
-function selectAll() {
-  currentFiles.forEach(f => selectedIds.add(f.id));
-  document.querySelectorAll('.file-item').forEach(el => el.classList.add('selected'));
-  updateCount();
-}
-
-function deselectAll() {
-  selectedIds.clear();
-  document.querySelectorAll('.file-item').forEach(el => el.classList.remove('selected'));
-  updateCount();
-}
+function selectAll() { currentFiles.forEach(f => selectedIds.add(f.id)); document.querySelectorAll('.file-item').forEach(el => el.classList.add('selected')); updateCount(); }
+function deselectAll() { selectedIds.clear(); document.querySelectorAll('.file-item').forEach(el => el.classList.remove('selected')); updateCount(); }
 
 function updateCount() {
   document.getElementById('selectCount').textContent = `${selectedIds.size} file${selectedIds.size !== 1 ? 's' : ''} selected`;
@@ -951,8 +973,7 @@ async function loadFiles(folderId, folderName) {
   document.getElementById('previewSection').style.display = 'none';
   try {
     const query = encodeURIComponent(`'${folderId}' in parents and mimeType!='application/vnd.google-apps.folder' and trashed=false`);
-    let allFiles = [];
-    let pageToken = null;
+    let allFiles = [], pageToken = null;
     do {
       const url = `https://www.googleapis.com/drive/v3/files?q=${query}&fields=nextPageToken,files(id,name,mimeType)&pageSize=1000${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`;
       const data = await gapi(url);
@@ -999,7 +1020,50 @@ async function doRename() {
   }
 }
 
-// ─── Copy Folder Tool ──────────────────────────────────────────────────────────
+// ─── Copy Tool — URL parsing ────────────────────────────────────────────────────
+
+function extractFolderIdFromUrl(url) {
+  // Handles:
+  // https://drive.google.com/drive/folders/FOLDER_ID
+  // https://drive.google.com/drive/folders/FOLDER_ID?usp=...
+  // https://drive.google.com/drive/u/0/folders/FOLDER_ID
+  // https://drive.google.com/open?id=FOLDER_ID
+  url = url.trim();
+  let m;
+  m = url.match(/\/folders\/([a-zA-Z0-9_-]{20,})/);
+  if (m) return m[1];
+  m = url.match(/[?&]id=([a-zA-Z0-9_-]{20,})/);
+  if (m) return m[1];
+  // Maybe they pasted just the raw ID
+  if (/^[a-zA-Z0-9_-]{20,}$/.test(url)) return url;
+  return null;
+}
+
+async function loadFolderById(folderId) {
+  const data = await gapi(`https://www.googleapis.com/drive/v3/files/${folderId}?fields=id,name,mimeType`);
+  if (data.mimeType !== 'application/vnd.google-apps.folder') throw new Error('This is not a folder');
+  return { id: data.id, name: data.name };
+}
+
+// ─── Copy Tool — Mode toggles ──────────────────────────────────────────────────
+
+function initModeToggle(toggleId, searchPaneId, urlPaneId) {
+  const toggle = document.getElementById(toggleId);
+  toggle.addEventListener('click', e => {
+    const btn = e.target.closest('.mode-btn');
+    if (!btn) return;
+    toggle.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    document.getElementById(searchPaneId).style.display = mode === 'search' ? '' : 'none';
+    document.getElementById(urlPaneId).style.display = mode === 'url' ? '' : 'none';
+  });
+}
+
+initModeToggle('srcModeToggle', 'srcSearchPane', 'srcUrlPane');
+initModeToggle('dstModeToggle', 'dstSearchPane', 'dstUrlPane');
+
+// ─── Copy Tool — Folder search ─────────────────────────────────────────────────
 
 async function searchCopyFolders(inputId, resultsId, onSelect) {
   const q = document.getElementById(inputId).value.trim();
@@ -1019,7 +1083,6 @@ async function searchCopyFolders(inputId, resultsId, onSelect) {
       d.className = 'result-item';
       d.innerHTML = `<span style="font-size:15px;">📁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.name}</span><span style="font-size:11px;color:var(--muted);">Select →</span>`;
       d.onclick = () => {
-        // Highlight selected
         list.querySelectorAll('.result-item').forEach(el => el.classList.remove('selected-folder'));
         d.classList.add('selected-folder');
         onSelect({ id: f.id, name: f.name });
@@ -1032,12 +1095,38 @@ async function searchCopyFolders(inputId, resultsId, onSelect) {
   }
 }
 
+// ─── Copy Tool — URL load ──────────────────────────────────────────────────────
+
+async function loadFolderFromUrl(inputId, statusTagId, onSelect) {
+  const raw = document.getElementById(inputId).value.trim();
+  if (!raw) return;
+  const btn = document.getElementById(inputId === 'srcUrlInput' ? 'srcUrlBtn' : 'dstUrlBtn');
+  btn.textContent = 'Loading...';
+  btn.disabled = true;
+  try {
+    const folderId = extractFolderIdFromUrl(raw);
+    if (!folderId) throw new Error('Could not find a folder ID in this URL. Check the link and try again.');
+    const folder = await loadFolderById(folderId);
+    onSelect(folder);
+  } catch(e) {
+    const tag = document.getElementById(statusTagId);
+    tag.textContent = `⚠ ${e.message}`;
+    tag.className = 'folder-selected-tag empty-tag';
+    tag.style.color = 'var(--danger)';
+  } finally {
+    btn.textContent = 'Load';
+    btn.disabled = false;
+  }
+}
+
+// ─── Copy Tool — Selection callbacks ──────────────────────────────────────────
+
 function onSrcSelected(folder) {
   copySrc = folder;
   const tag = document.getElementById('srcTag');
   tag.textContent = `📁 ${folder.name}`;
   tag.className = 'folder-selected-tag';
-  // Pre-fill the new name field
+  tag.style.color = '';
   if (!document.getElementById('copyFolderName').value) {
     document.getElementById('copyFolderName').value = folder.name + ' (Copy)';
   }
@@ -1049,6 +1138,7 @@ function onDstSelected(folder) {
   const tag = document.getElementById('dstTag');
   tag.textContent = `📁 ${folder.name}`;
   tag.className = 'folder-selected-tag';
+  tag.style.color = '';
   refreshCopyReady();
 }
 
@@ -1065,43 +1155,34 @@ function refreshCopyReady() {
       <div class="row"><span class="lbl">New folder name</span><span class="val green">${newName}</span></div>
       <div class="row"><span class="lbl">Include subfolders</span><span class="val">${recursive ? 'Yes' : 'No — top-level only'}</span></div>
     `;
+    document.getElementById('copyStatusMsg').textContent = 'Ready — review settings and click Copy Folder';
   } else {
     document.getElementById('copySummaryCard').style.display = 'none';
-  }
-  if (!ready) {
     document.getElementById('copyStatusMsg').textContent = 'Select source and destination folders to begin';
-    document.getElementById('copyStatusMsg').className = 'status';
-  } else {
-    document.getElementById('copyStatusMsg').textContent = 'Ready — review settings and click Copy Folder';
-    document.getElementById('copyStatusMsg').className = 'status';
   }
+  document.getElementById('copyStatusMsg').className = 'status';
 }
 
+// ─── Copy Tool — Copy logic ────────────────────────────────────────────────────
+
 function addLog(msg, type = 'info') {
-  const card = document.getElementById('copyLogCard');
-  card.style.display = '';
+  document.getElementById('copyLogCard').style.display = '';
   const log = document.getElementById('copyLog');
   const d = document.createElement('div');
   d.className = `log-item${type === 'ok' ? ' ok' : type === 'err' ? ' err' : ''}`;
-  const icon = type === 'ok' ? '✓' : type === 'err' ? '✗' : '·';
-  d.innerHTML = `<span class="log-icon">${icon}</span><span>${msg}</span>`;
+  d.innerHTML = `<span class="log-icon">${type === 'ok' ? '✓' : type === 'err' ? '✗' : '·'}</span><span>${msg}</span>`;
   log.appendChild(d);
   log.scrollTop = log.scrollHeight;
 }
 
-// Recursively copy a folder tree. Returns the new folder id.
 async function copyFolderRecursive(srcId, srcName, dstParentId, recursive, includeGDocs, progressState) {
-  // Create the new folder inside dstParentId
   const folderMeta = { name: srcName, mimeType: 'application/vnd.google-apps.folder', parents: [dstParentId] };
   const newFolder = await gapi('https://www.googleapis.com/drive/v3/files?fields=id,name', {
-    method: 'POST',
-    body: JSON.stringify(folderMeta)
+    method: 'POST', body: JSON.stringify(folderMeta)
   });
   addLog(`Created folder: ${srcName}`, 'ok');
 
-  // List contents (files + subfolders)
-  let pageToken = null;
-  let items = [];
+  let pageToken = null, items = [];
   do {
     const q = encodeURIComponent(`'${srcId}' in parents and trashed=false`);
     const url = `https://www.googleapis.com/drive/v3/files?q=${q}&fields=nextPageToken,files(id,name,mimeType)&pageSize=1000${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`;
@@ -1112,32 +1193,24 @@ async function copyFolderRecursive(srcId, srcName, dstParentId, recursive, inclu
 
   for (const item of items) {
     if (item.mimeType === 'application/vnd.google-apps.folder') {
-      if (recursive) {
-        await copyFolderRecursive(item.id, item.name, newFolder.id, recursive, includeGDocs, progressState);
-      }
+      if (recursive) await copyFolderRecursive(item.id, item.name, newFolder.id, recursive, includeGDocs, progressState);
     } else {
-      // Skip Google Workspace files if opted out
       const isGoogleDoc = item.mimeType && item.mimeType.startsWith('application/vnd.google-apps.');
       if (!includeGDocs && isGoogleDoc) {
         addLog(`Skipped (Google Doc): ${item.name}`);
-        progressState.done++;
-        updateCopyProgress(progressState);
-        continue;
+        progressState.done++; updateCopyProgress(progressState); continue;
       }
       try {
         await gapi(`https://www.googleapis.com/drive/v3/files/${item.id}/copy?fields=id,name`, {
-          method: 'POST',
-          body: JSON.stringify({ name: item.name, parents: [newFolder.id] })
+          method: 'POST', body: JSON.stringify({ name: item.name, parents: [newFolder.id] })
         });
         addLog(`Copied: ${item.name}`, 'ok');
       } catch(e) {
         addLog(`Failed: ${item.name} — ${e.message}`, 'err');
       }
-      progressState.done++;
-      updateCopyProgress(progressState);
+      progressState.done++; updateCopyProgress(progressState);
     }
   }
-
   return newFolder.id;
 }
 
@@ -1149,9 +1222,7 @@ function updateCopyProgress(state) {
 }
 
 async function countFiles(folderId, recursive) {
-  let total = 0;
-  let pageToken = null;
-  let items = [];
+  let total = 0, pageToken = null, items = [];
   do {
     const q = encodeURIComponent(`'${folderId}' in parents and trashed=false`);
     const url = `https://www.googleapis.com/drive/v3/files?q=${q}&fields=nextPageToken,files(id,mimeType)&pageSize=1000${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`;
@@ -1159,13 +1230,9 @@ async function countFiles(folderId, recursive) {
     items = items.concat(data.files || []);
     pageToken = data.nextPageToken || null;
   } while (pageToken);
-
   for (const item of items) {
-    if (item.mimeType === 'application/vnd.google-apps.folder') {
-      if (recursive) total += await countFiles(item.id, recursive);
-    } else {
-      total++;
-    }
+    if (item.mimeType === 'application/vnd.google-apps.folder') { if (recursive) total += await countFiles(item.id, recursive); }
+    else total++;
   }
   return total;
 }
@@ -1189,15 +1256,11 @@ async function startCopy() {
   try {
     const total = await countFiles(copySrc.id, recursive);
     addLog(`Found ${total} file${total !== 1 ? 's' : ''} to copy`);
-
     const progressState = { done: 0, total };
     document.getElementById('copyProgressWrap').style.display = '';
     updateCopyProgress(progressState);
-
     document.getElementById('copyStatusMsg').textContent = `Copying ${total} files...`;
-
     await copyFolderRecursive(copySrc.id, newName, copyDst.id, recursive, includeGDocs, progressState);
-
     document.getElementById('copyProgressBar').style.width = '100%';
     document.getElementById('copyProgressPct').textContent = '100%';
     document.getElementById('copyProgressLabel').textContent = 'Complete!';
@@ -1216,18 +1279,15 @@ async function startCopy() {
 }
 
 function resetCopy() {
-  copySrc = null;
-  copyDst = null;
-  copyRunning = false;
-  document.getElementById('srcResults').innerHTML = '';
-  document.getElementById('dstResults').innerHTML = '';
-  document.getElementById('srcSearch').value = '';
-  document.getElementById('dstSearch').value = '';
-  document.getElementById('srcTag').textContent = 'No folder selected';
-  document.getElementById('srcTag').className = 'folder-selected-tag empty-tag';
-  document.getElementById('dstTag').textContent = 'No folder selected';
-  document.getElementById('dstTag').className = 'folder-selected-tag empty-tag';
-  document.getElementById('copyFolderName').value = '';
+  copySrc = null; copyDst = null; copyRunning = false;
+  ['srcResults','dstResults'].forEach(id => document.getElementById(id).innerHTML = '');
+  ['srcSearch','dstSearch','srcUrlInput','dstUrlInput','copyFolderName'].forEach(id => document.getElementById(id).value = '');
+  ['srcTag','dstTag'].forEach(id => {
+    const t = document.getElementById(id);
+    t.textContent = 'No folder selected';
+    t.className = 'folder-selected-tag empty-tag';
+    t.style.color = '';
+  });
   document.getElementById('copySummaryCard').style.display = 'none';
   document.getElementById('copyLogCard').style.display = 'none';
   document.getElementById('copyProgressWrap').style.display = 'none';
@@ -1241,6 +1301,8 @@ function resetCopy() {
 
 document.getElementById('signInBtn').addEventListener('click', signIn);
 document.getElementById('signOutBtn').addEventListener('click', signOut);
+
+// Rename
 document.getElementById('searchBtn').addEventListener('click', searchFolders);
 document.getElementById('selectAllBtn').addEventListener('click', selectAll);
 document.getElementById('deselectAllBtn').addEventListener('click', deselectAll);
@@ -1253,10 +1315,19 @@ document.getElementById('startNum').addEventListener('change', updatePreview);
 document.getElementById('padWidth').addEventListener('change', updatePreview);
 document.getElementById('folderSearch').addEventListener('keydown', e => { if (e.key === 'Enter') searchFolders(); });
 
+// Copy — search
 document.getElementById('srcSearchBtn').addEventListener('click', () => searchCopyFolders('srcSearch', 'srcResults', onSrcSelected));
 document.getElementById('dstSearchBtn').addEventListener('click', () => searchCopyFolders('dstSearch', 'dstResults', onDstSelected));
 document.getElementById('srcSearch').addEventListener('keydown', e => { if (e.key === 'Enter') searchCopyFolders('srcSearch', 'srcResults', onSrcSelected); });
 document.getElementById('dstSearch').addEventListener('keydown', e => { if (e.key === 'Enter') searchCopyFolders('dstSearch', 'dstResults', onDstSelected); });
+
+// Copy — URL load
+document.getElementById('srcUrlBtn').addEventListener('click', () => loadFolderFromUrl('srcUrlInput', 'srcTag', onSrcSelected));
+document.getElementById('dstUrlBtn').addEventListener('click', () => loadFolderFromUrl('dstUrlInput', 'dstTag', onDstSelected));
+document.getElementById('srcUrlInput').addEventListener('keydown', e => { if (e.key === 'Enter') loadFolderFromUrl('srcUrlInput', 'srcTag', onSrcSelected); });
+document.getElementById('dstUrlInput').addEventListener('keydown', e => { if (e.key === 'Enter') loadFolderFromUrl('dstUrlInput', 'dstTag', onDstSelected); });
+
+// Copy — options
 document.getElementById('copyFolderName').addEventListener('input', refreshCopyReady);
 document.getElementById('copyRecursive').addEventListener('change', refreshCopyReady);
 document.getElementById('copyStartBtn').addEventListener('click', startCopy);
