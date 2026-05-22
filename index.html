@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LOVA Drive Renamer</title>
+<title>LOVA Drive Tools</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -17,6 +17,7 @@
     --accent: #6ee7b7;
     --accent2: #34d399;
     --danger: #f87171;
+    --warning: #fbbf24;
     --mono: 'DM Mono', monospace;
     --sans: 'Syne', sans-serif;
   }
@@ -77,6 +78,34 @@
     font-family: var(--sans);
   }
   .btn-signout:hover { color: var(--danger); }
+
+  /* Tab nav */
+  .tab-nav {
+    display: flex;
+    gap: 4px;
+    padding: 16px 32px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--sans);
+    padding: 8px 16px 12px;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: color 0.15s;
+    margin-bottom: -0.5px;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
 
   #authScreen {
     flex: 1;
@@ -140,14 +169,21 @@
   }
   .btn-google:hover { opacity: 0.88; }
 
+  /* Tab panels */
   #mainApp {
     display: none;
     flex: 1;
+    flex-direction: column;
+  }
+
+  .tab-panel {
+    display: none;
     padding: 28px 32px;
     max-width: 860px;
     width: 100%;
     margin: 0 auto;
   }
+  .tab-panel.active { display: block; }
 
   .grid {
     display: grid;
@@ -298,6 +334,10 @@
   }
   .result-item:last-child { border-bottom: none; }
   .result-item:hover { background: rgba(110,231,183,0.05); }
+  .result-item.selected-folder {
+    background: rgba(110,231,183,0.10);
+    border-left: 2px solid var(--accent);
+  }
 
   .file-item {
     display: flex;
@@ -383,6 +423,7 @@
   .status { font-size: 13px; color: var(--muted); }
   .status.ok { color: var(--accent); }
   .status.err { color: var(--danger); }
+  .status.warn { color: var(--warning); }
 
   .empty { padding: 24px; text-align: center; color: var(--muted); font-size: 13px; }
   .loading { padding: 16px; text-align: center; color: var(--muted); font-size: 13px; }
@@ -393,6 +434,93 @@
     margin-bottom: 8px;
     font-family: var(--mono);
   }
+
+  /* Copy tool specifics */
+  .copy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .folder-selected-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(110,231,183,0.08);
+    border: 0.5px solid rgba(110,231,183,0.25);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-top: 10px;
+    font-size: 12px;
+    font-family: var(--mono);
+    color: var(--accent);
+    min-height: 36px;
+  }
+  .folder-selected-tag.empty-tag {
+    color: var(--muted);
+    background: var(--surface2);
+    border-color: var(--border2);
+  }
+
+  .copy-summary {
+    background: var(--surface2);
+    border-radius: 10px;
+    border: 0.5px solid var(--border);
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .copy-summary .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .copy-summary .row:last-child { border-bottom: none; }
+  .copy-summary .lbl { color: var(--muted); font-size: 12px; }
+  .copy-summary .val { font-family: var(--mono); color: var(--text); font-size: 12px; }
+  .copy-summary .val.green { color: var(--accent); }
+
+  .progress-bar-wrap {
+    background: var(--surface2);
+    border-radius: 6px;
+    height: 6px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 6px;
+    transition: width 0.2s ease;
+    width: 0%;
+  }
+
+  .log-list {
+    background: var(--surface2);
+    border-radius: 10px;
+    border: 0.5px solid var(--border);
+    overflow: hidden;
+    max-height: 200px;
+    overflow-y: auto;
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+  .log-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 7px 14px;
+    border-bottom: 0.5px solid var(--border);
+    color: var(--muted);
+  }
+  .log-item:last-child { border-bottom: none; }
+  .log-item.ok { color: var(--accent); }
+  .log-item.err { color: var(--danger); }
+  .log-item .log-icon { flex-shrink: 0; margin-top: 1px; }
 
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -405,7 +533,7 @@
 <body>
 
 <div class="topbar">
-  <div class="logo">LOVA <span>/ Drive Renamer</span></div>
+  <div class="logo">LOVA <span>/ Drive Tools</span></div>
   <div id="userPill" style="display:none;" class="user-pill">
     <div class="user-avatar" id="userInitials">L</div>
     <span id="userEmailLabel">—</span>
@@ -413,11 +541,12 @@
   </div>
 </div>
 
+<!-- AUTH SCREEN -->
 <div id="authScreen">
   <div class="auth-card fadein">
     <div class="auth-icon">📁</div>
-    <div class="auth-title">LOVA Drive Renamer</div>
-    <div class="auth-sub">Connect your Google Drive to batch rename files using Mac Finder-style format options. Works in any browser — no install needed.</div>
+    <div class="auth-title">LOVA Drive Tools</div>
+    <div class="auth-sub">Connect your Google Drive to batch rename files or copy entire folders — no install needed, works in any browser.</div>
     <button class="btn-google" id="signInBtn">
       <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.3z"/></svg>
       Sign in with Google
@@ -425,88 +554,179 @@
   </div>
 </div>
 
+<!-- MAIN APP -->
 <div id="mainApp">
 
-  <div class="grid">
-    <div class="card">
-      <div class="card-label">Format Options</div>
+  <!-- Tab navigation -->
+  <div class="tab-nav" id="tabNav" style="display:none;">
+    <button class="tab-btn active" data-tab="renameTab">📝 Rename Files</button>
+    <button class="tab-btn" data-tab="copyTab">📋 Copy Folder</button>
+  </div>
 
+  <!-- ======= RENAME TAB ======= -->
+  <div id="renameTab" class="tab-panel active">
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-label">Format Options</div>
+
+        <div class="field-row">
+          <span class="field-label">Name Format</span>
+          <select id="formatType">
+            <option value="index">Name and Index</option>
+            <option value="counter">Name and Counter</option>
+            <option value="date">Name and Date</option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <span class="field-label">Position</span>
+          <select id="wherePos">
+            <option value="after">After name</option>
+            <option value="before">Before name</option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <span class="field-label">Base Name</span>
+          <input type="text" id="customName" value="FILENAME" placeholder="Enter base name..." />
+        </div>
+
+        <div id="startRow" class="field-row">
+          <span class="field-label">Start at</span>
+          <input type="number" id="startNum" value="1" min="0" />
+          <select id="padWidth" style="min-width:110px; display:none;">
+            <option value="0">1, 2, 3</option>
+            <option value="2">01, 02, 03</option>
+            <option value="3" selected>001, 002, 003</option>
+            <option value="4">0001, 0002</option>
+          </select>
+        </div>
+
+        <div class="example-tag">
+          <span class="lbl">Example:</span>
+          <span class="val" id="exampleOut">FILENAME_1.pdf</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Browse Google Drive</div>
+        <div class="search-row">
+          <input type="text" id="folderSearch" placeholder="Search folder name..." />
+          <button class="btn btn-accent" id="searchBtn">Search</button>
+        </div>
+        <div id="folderResults"></div>
+      </div>
+    </div>
+
+    <div class="card-full" id="fileSection" style="display:none;">
+      <div class="card-label">Select Files to Rename</div>
+      <div class="breadcrumb" id="breadcrumb"></div>
+      <div class="select-bar">
+        <span class="select-count" id="selectCount">0 files selected</span>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-sm" id="selectAllBtn">Select all</button>
+          <button class="btn btn-sm" id="deselectAllBtn">Deselect all</button>
+        </div>
+      </div>
+      <div class="result-list" id="fileList"></div>
+    </div>
+
+    <div class="card-full" id="previewSection" style="display:none;">
+      <div class="card-label">Preview — rename results</div>
+      <div class="result-list" id="previewList"></div>
+    </div>
+
+    <div class="footer-bar">
+      <span class="status" id="statusMsg">Select a folder to get started</span>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button class="btn" id="cancelBtn">Clear</button>
+        <button class="btn-rename" id="renameBtn" disabled>Rename Files</button>
+      </div>
+    </div>
+
+  </div><!-- /renameTab -->
+
+  <!-- ======= COPY FOLDER TAB ======= -->
+  <div id="copyTab" class="tab-panel">
+
+    <div class="copy-grid">
+      <!-- Source folder -->
+      <div class="card">
+        <div class="card-label">Source Folder</div>
+        <div class="search-row">
+          <input type="text" id="srcSearch" placeholder="Search folder to copy..." />
+          <button class="btn btn-accent" id="srcSearchBtn">Search</button>
+        </div>
+        <div id="srcResults"></div>
+        <div class="folder-selected-tag empty-tag" id="srcTag">No folder selected</div>
+      </div>
+
+      <!-- Destination folder -->
+      <div class="card">
+        <div class="card-label">Destination Folder</div>
+        <div class="search-row">
+          <input type="text" id="dstSearch" placeholder="Search destination folder..." />
+          <button class="btn btn-accent" id="dstSearchBtn">Search</button>
+        </div>
+        <div id="dstResults"></div>
+        <div class="folder-selected-tag empty-tag" id="dstTag">No folder selected</div>
+      </div>
+    </div>
+
+    <!-- Options -->
+    <div class="card-full">
+      <div class="card-label">Copy Options</div>
       <div class="field-row">
-        <span class="field-label">Name Format</span>
-        <select id="formatType">
-          <option value="index">Name and Index</option>
-          <option value="counter">Name and Counter</option>
-          <option value="date">Name and Date</option>
+        <span class="field-label">New folder name</span>
+        <input type="text" id="copyFolderName" placeholder="Leave blank to keep original name..." style="font-family:var(--sans);" />
+      </div>
+      <div class="field-row">
+        <span class="field-label">Include subfolders</span>
+        <select id="copyRecursive">
+          <option value="yes">Yes — copy all subfolders recursively</option>
+          <option value="no">No — top-level files only</option>
         </select>
       </div>
-
       <div class="field-row">
-        <span class="field-label">Position</span>
-        <select id="wherePos">
-          <option value="after">After name</option>
-          <option value="before">Before name</option>
+        <span class="field-label">Google Docs</span>
+        <select id="copyGDocs">
+          <option value="yes">Include Google Docs / Sheets / Slides</option>
+          <option value="no">Skip Google Docs (binary files only)</option>
         </select>
       </div>
+    </div>
 
-      <div class="field-row">
-        <span class="field-label">Base Name</span>
-        <input type="text" id="customName" value="FILENAME" placeholder="Enter base name..." />
-      </div>
-
-      <div id="startRow" class="field-row">
-        <span class="field-label">Start at</span>
-        <input type="number" id="startNum" value="1" min="0" />
-        <select id="padWidth" style="min-width:110px; display:none;">
-          <option value="0">1, 2, 3</option>
-          <option value="2">01, 02, 03</option>
-          <option value="3" selected>001, 002, 003</option>
-          <option value="4">0001, 0002</option>
-        </select>
-      </div>
-
-      <div class="example-tag">
-        <span class="lbl">Example:</span>
-        <span class="val" id="exampleOut">FILENAME_1.pdf</span>
+    <!-- Summary before copy -->
+    <div class="card-full" id="copySummaryCard" style="display:none;">
+      <div class="card-label">Ready to copy</div>
+      <div class="copy-summary" id="copySummary"></div>
+      <div id="copyProgressWrap" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:12px;color:var(--muted);" id="copyProgressLabel">Starting...</span>
+          <span style="font-size:12px;font-family:var(--mono);color:var(--accent);" id="copyProgressPct">0%</span>
+        </div>
+        <div class="progress-bar-wrap"><div class="progress-bar" id="copyProgressBar"></div></div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-label">Browse Google Drive</div>
-      <div class="search-row">
-        <input type="text" id="folderSearch" placeholder="Search folder name..." />
-        <button class="btn btn-accent" id="searchBtn">Search</button>
-      </div>
-      <div id="folderResults"></div>
+    <!-- Log -->
+    <div class="card-full" id="copyLogCard" style="display:none;">
+      <div class="card-label">Copy log</div>
+      <div class="log-list" id="copyLog"></div>
     </div>
-  </div>
 
-  <div class="card-full" id="fileSection" style="display:none;">
-    <div class="card-label">Select Files to Rename</div>
-    <div class="breadcrumb" id="breadcrumb"></div>
-    <div class="select-bar">
-      <span class="select-count" id="selectCount">0 files selected</span>
-      <div style="display:flex;gap:6px;">
-        <button class="btn btn-sm" id="selectAllBtn">Select all</button>
-        <button class="btn btn-sm" id="deselectAllBtn">Deselect all</button>
+    <div class="footer-bar">
+      <span class="status" id="copyStatusMsg">Select source and destination folders to begin</span>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button class="btn" id="copyResetBtn">Reset</button>
+        <button class="btn-rename" id="copyStartBtn" disabled>Copy Folder</button>
       </div>
     </div>
-    <div class="result-list" id="fileList"></div>
-  </div>
 
-  <div class="card-full" id="previewSection" style="display:none;">
-    <div class="card-label">Preview — rename results</div>
-    <div class="result-list" id="previewList"></div>
-  </div>
+  </div><!-- /copyTab -->
 
-  <div class="footer-bar">
-    <span class="status" id="statusMsg">Select a folder to get started</span>
-    <div style="display:flex;gap:10px;align-items:center;">
-      <button class="btn" id="cancelBtn">Clear</button>
-      <button class="btn-rename" id="renameBtn" disabled>Rename Files</button>
-    </div>
-  </div>
-
-</div>
+</div><!-- /mainApp -->
 
 <script>
 const CLIENT_ID = '7763473931-kehg68qo6vtjk3qcu2g1ji7l5amnr31f.apps.googleusercontent.com';
@@ -515,6 +735,13 @@ const SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com
 let accessToken = null;
 let currentFiles = [];
 let selectedIds = new Set();
+
+// Copy state
+let copySrc = null;  // { id, name }
+let copyDst = null;  // { id, name }
+let copyRunning = false;
+
+// ─── Auth ─────────────────────────────────────────────────────────────────────
 
 function signIn() {
   const params = new URLSearchParams({
@@ -548,12 +775,14 @@ function signOut() {
   sessionStorage.removeItem('gdrive_token');
   document.getElementById('authScreen').style.display = 'flex';
   document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('tabNav').style.display = 'none';
   document.getElementById('userPill').style.display = 'none';
 }
 
 async function onSignedIn() {
   document.getElementById('authScreen').style.display = 'none';
-  document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('mainApp').style.display = 'flex';
+  document.getElementById('tabNav').style.display = 'flex';
   document.getElementById('userPill').style.display = 'flex';
   try {
     const res = await gapi('https://www.googleapis.com/oauth2/v1/userinfo?alt=json');
@@ -572,6 +801,19 @@ async function gapi(url, opts = {}) {
   if (!res.ok) throw new Error(`API ${res.status}`);
   return res.json();
 }
+
+// ─── Tab switching ─────────────────────────────────────────────────────────────
+
+document.getElementById('tabNav').addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(btn.dataset.tab).classList.add('active');
+});
+
+// ─── Rename tool ───────────────────────────────────────────────────────────────
 
 function buildName(original, idx) {
   const fmt = document.getElementById('formatType').value;
@@ -700,7 +942,6 @@ async function searchFolders() {
   }
 }
 
-// Updated: fetches up to 1,000 files using pagination
 async function loadFiles(folderId, folderName) {
   selectedIds.clear();
   currentFiles = [];
@@ -758,6 +999,246 @@ async function doRename() {
   }
 }
 
+// ─── Copy Folder Tool ──────────────────────────────────────────────────────────
+
+async function searchCopyFolders(inputId, resultsId, onSelect) {
+  const q = document.getElementById(inputId).value.trim();
+  if (!q) return;
+  const div = document.getElementById(resultsId);
+  div.innerHTML = '<div class="loading">Searching...</div>';
+  try {
+    const query = encodeURIComponent(`mimeType='application/vnd.google-apps.folder' and name contains '${q}' and trashed=false`);
+    const data = await gapi(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&pageSize=8`);
+    const folders = data.files || [];
+    div.innerHTML = '';
+    if (!folders.length) { div.innerHTML = '<div class="empty">No folders found</div>'; return; }
+    const list = document.createElement('div');
+    list.className = 'result-list fadein';
+    folders.forEach(f => {
+      const d = document.createElement('div');
+      d.className = 'result-item';
+      d.innerHTML = `<span style="font-size:15px;">📁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.name}</span><span style="font-size:11px;color:var(--muted);">Select →</span>`;
+      d.onclick = () => {
+        // Highlight selected
+        list.querySelectorAll('.result-item').forEach(el => el.classList.remove('selected-folder'));
+        d.classList.add('selected-folder');
+        onSelect({ id: f.id, name: f.name });
+      };
+      list.appendChild(d);
+    });
+    div.appendChild(list);
+  } catch(e) {
+    div.innerHTML = `<div class="empty" style="color:var(--danger);">Error: ${e.message}</div>`;
+  }
+}
+
+function onSrcSelected(folder) {
+  copySrc = folder;
+  const tag = document.getElementById('srcTag');
+  tag.textContent = `📁 ${folder.name}`;
+  tag.className = 'folder-selected-tag';
+  // Pre-fill the new name field
+  if (!document.getElementById('copyFolderName').value) {
+    document.getElementById('copyFolderName').value = folder.name + ' (Copy)';
+  }
+  refreshCopyReady();
+}
+
+function onDstSelected(folder) {
+  copyDst = folder;
+  const tag = document.getElementById('dstTag');
+  tag.textContent = `📁 ${folder.name}`;
+  tag.className = 'folder-selected-tag';
+  refreshCopyReady();
+}
+
+function refreshCopyReady() {
+  const ready = copySrc && copyDst;
+  document.getElementById('copyStartBtn').disabled = !ready || copyRunning;
+  if (ready) {
+    const newName = document.getElementById('copyFolderName').value.trim() || copySrc.name;
+    const recursive = document.getElementById('copyRecursive').value === 'yes';
+    document.getElementById('copySummaryCard').style.display = '';
+    document.getElementById('copySummary').innerHTML = `
+      <div class="row"><span class="lbl">Source folder</span><span class="val">📁 ${copySrc.name}</span></div>
+      <div class="row"><span class="lbl">Destination folder</span><span class="val">📁 ${copyDst.name}</span></div>
+      <div class="row"><span class="lbl">New folder name</span><span class="val green">${newName}</span></div>
+      <div class="row"><span class="lbl">Include subfolders</span><span class="val">${recursive ? 'Yes' : 'No — top-level only'}</span></div>
+    `;
+  } else {
+    document.getElementById('copySummaryCard').style.display = 'none';
+  }
+  if (!ready) {
+    document.getElementById('copyStatusMsg').textContent = 'Select source and destination folders to begin';
+    document.getElementById('copyStatusMsg').className = 'status';
+  } else {
+    document.getElementById('copyStatusMsg').textContent = 'Ready — review settings and click Copy Folder';
+    document.getElementById('copyStatusMsg').className = 'status';
+  }
+}
+
+function addLog(msg, type = 'info') {
+  const card = document.getElementById('copyLogCard');
+  card.style.display = '';
+  const log = document.getElementById('copyLog');
+  const d = document.createElement('div');
+  d.className = `log-item${type === 'ok' ? ' ok' : type === 'err' ? ' err' : ''}`;
+  const icon = type === 'ok' ? '✓' : type === 'err' ? '✗' : '·';
+  d.innerHTML = `<span class="log-icon">${icon}</span><span>${msg}</span>`;
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+}
+
+// Recursively copy a folder tree. Returns the new folder id.
+async function copyFolderRecursive(srcId, srcName, dstParentId, recursive, includeGDocs, progressState) {
+  // Create the new folder inside dstParentId
+  const folderMeta = { name: srcName, mimeType: 'application/vnd.google-apps.folder', parents: [dstParentId] };
+  const newFolder = await gapi('https://www.googleapis.com/drive/v3/files?fields=id,name', {
+    method: 'POST',
+    body: JSON.stringify(folderMeta)
+  });
+  addLog(`Created folder: ${srcName}`, 'ok');
+
+  // List contents (files + subfolders)
+  let pageToken = null;
+  let items = [];
+  do {
+    const q = encodeURIComponent(`'${srcId}' in parents and trashed=false`);
+    const url = `https://www.googleapis.com/drive/v3/files?q=${q}&fields=nextPageToken,files(id,name,mimeType)&pageSize=1000${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`;
+    const data = await gapi(url);
+    items = items.concat(data.files || []);
+    pageToken = data.nextPageToken || null;
+  } while (pageToken);
+
+  for (const item of items) {
+    if (item.mimeType === 'application/vnd.google-apps.folder') {
+      if (recursive) {
+        await copyFolderRecursive(item.id, item.name, newFolder.id, recursive, includeGDocs, progressState);
+      }
+    } else {
+      // Skip Google Workspace files if opted out
+      const isGoogleDoc = item.mimeType && item.mimeType.startsWith('application/vnd.google-apps.');
+      if (!includeGDocs && isGoogleDoc) {
+        addLog(`Skipped (Google Doc): ${item.name}`);
+        progressState.done++;
+        updateCopyProgress(progressState);
+        continue;
+      }
+      try {
+        await gapi(`https://www.googleapis.com/drive/v3/files/${item.id}/copy?fields=id,name`, {
+          method: 'POST',
+          body: JSON.stringify({ name: item.name, parents: [newFolder.id] })
+        });
+        addLog(`Copied: ${item.name}`, 'ok');
+      } catch(e) {
+        addLog(`Failed: ${item.name} — ${e.message}`, 'err');
+      }
+      progressState.done++;
+      updateCopyProgress(progressState);
+    }
+  }
+
+  return newFolder.id;
+}
+
+function updateCopyProgress(state) {
+  const pct = state.total > 0 ? Math.round((state.done / state.total) * 100) : 0;
+  document.getElementById('copyProgressBar').style.width = `${pct}%`;
+  document.getElementById('copyProgressPct').textContent = `${pct}%`;
+  document.getElementById('copyProgressLabel').textContent = `Copied ${state.done} of ${state.total} files...`;
+}
+
+async function countFiles(folderId, recursive) {
+  let total = 0;
+  let pageToken = null;
+  let items = [];
+  do {
+    const q = encodeURIComponent(`'${folderId}' in parents and trashed=false`);
+    const url = `https://www.googleapis.com/drive/v3/files?q=${q}&fields=nextPageToken,files(id,mimeType)&pageSize=1000${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`;
+    const data = await gapi(url);
+    items = items.concat(data.files || []);
+    pageToken = data.nextPageToken || null;
+  } while (pageToken);
+
+  for (const item of items) {
+    if (item.mimeType === 'application/vnd.google-apps.folder') {
+      if (recursive) total += await countFiles(item.id, recursive);
+    } else {
+      total++;
+    }
+  }
+  return total;
+}
+
+async function startCopy() {
+  if (!copySrc || !copyDst || copyRunning) return;
+  copyRunning = true;
+  document.getElementById('copyStartBtn').disabled = true;
+  document.getElementById('copyResetBtn').disabled = true;
+  document.getElementById('copyLogCard').style.display = '';
+  document.getElementById('copyLog').innerHTML = '';
+
+  const newName = document.getElementById('copyFolderName').value.trim() || copySrc.name;
+  const recursive = document.getElementById('copyRecursive').value === 'yes';
+  const includeGDocs = document.getElementById('copyGDocs').value === 'yes';
+
+  document.getElementById('copyStatusMsg').textContent = 'Counting files...';
+  document.getElementById('copyStatusMsg').className = 'status warn';
+  addLog(`Counting files in "${copySrc.name}"...`);
+
+  try {
+    const total = await countFiles(copySrc.id, recursive);
+    addLog(`Found ${total} file${total !== 1 ? 's' : ''} to copy`);
+
+    const progressState = { done: 0, total };
+    document.getElementById('copyProgressWrap').style.display = '';
+    updateCopyProgress(progressState);
+
+    document.getElementById('copyStatusMsg').textContent = `Copying ${total} files...`;
+
+    await copyFolderRecursive(copySrc.id, newName, copyDst.id, recursive, includeGDocs, progressState);
+
+    document.getElementById('copyProgressBar').style.width = '100%';
+    document.getElementById('copyProgressPct').textContent = '100%';
+    document.getElementById('copyProgressLabel').textContent = 'Complete!';
+    document.getElementById('copyStatusMsg').textContent = `✓ Folder copied successfully to "${copyDst.name}"`;
+    document.getElementById('copyStatusMsg').className = 'status ok';
+    addLog(`Done! "${newName}" created inside "${copyDst.name}"`, 'ok');
+  } catch(e) {
+    document.getElementById('copyStatusMsg').textContent = `Error: ${e.message}`;
+    document.getElementById('copyStatusMsg').className = 'status err';
+    addLog(`Copy failed: ${e.message}`, 'err');
+  }
+
+  copyRunning = false;
+  document.getElementById('copyResetBtn').disabled = false;
+  document.getElementById('copyStartBtn').disabled = false;
+}
+
+function resetCopy() {
+  copySrc = null;
+  copyDst = null;
+  copyRunning = false;
+  document.getElementById('srcResults').innerHTML = '';
+  document.getElementById('dstResults').innerHTML = '';
+  document.getElementById('srcSearch').value = '';
+  document.getElementById('dstSearch').value = '';
+  document.getElementById('srcTag').textContent = 'No folder selected';
+  document.getElementById('srcTag').className = 'folder-selected-tag empty-tag';
+  document.getElementById('dstTag').textContent = 'No folder selected';
+  document.getElementById('dstTag').className = 'folder-selected-tag empty-tag';
+  document.getElementById('copyFolderName').value = '';
+  document.getElementById('copySummaryCard').style.display = 'none';
+  document.getElementById('copyLogCard').style.display = 'none';
+  document.getElementById('copyProgressWrap').style.display = 'none';
+  document.getElementById('copyProgressBar').style.width = '0%';
+  document.getElementById('copyStartBtn').disabled = true;
+  document.getElementById('copyStatusMsg').textContent = 'Select source and destination folders to begin';
+  document.getElementById('copyStatusMsg').className = 'status';
+}
+
+// ─── Event listeners ───────────────────────────────────────────────────────────
+
 document.getElementById('signInBtn').addEventListener('click', signIn);
 document.getElementById('signOutBtn').addEventListener('click', signOut);
 document.getElementById('searchBtn').addEventListener('click', searchFolders);
@@ -771,6 +1252,15 @@ document.getElementById('customName').addEventListener('input', updatePreview);
 document.getElementById('startNum').addEventListener('change', updatePreview);
 document.getElementById('padWidth').addEventListener('change', updatePreview);
 document.getElementById('folderSearch').addEventListener('keydown', e => { if (e.key === 'Enter') searchFolders(); });
+
+document.getElementById('srcSearchBtn').addEventListener('click', () => searchCopyFolders('srcSearch', 'srcResults', onSrcSelected));
+document.getElementById('dstSearchBtn').addEventListener('click', () => searchCopyFolders('dstSearch', 'dstResults', onDstSelected));
+document.getElementById('srcSearch').addEventListener('keydown', e => { if (e.key === 'Enter') searchCopyFolders('srcSearch', 'srcResults', onSrcSelected); });
+document.getElementById('dstSearch').addEventListener('keydown', e => { if (e.key === 'Enter') searchCopyFolders('dstSearch', 'dstResults', onDstSelected); });
+document.getElementById('copyFolderName').addEventListener('input', refreshCopyReady);
+document.getElementById('copyRecursive').addEventListener('change', refreshCopyReady);
+document.getElementById('copyStartBtn').addEventListener('click', startCopy);
+document.getElementById('copyResetBtn').addEventListener('click', resetCopy);
 
 onFormatChange();
 
